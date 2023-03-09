@@ -1,0 +1,11 @@
+.*
+**/__pycache__/
+*.pyc
+*.pyo
+!/.gitignore
+training_checkpoints/
+data/
+.DS_Store
+**/Icon?
+**/*.h5
+**/*.mid
