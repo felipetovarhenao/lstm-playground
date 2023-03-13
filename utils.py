@@ -1,4 +1,4 @@
-from config import NOTE_FEATURES
+from config import NOTE_FEATURES, SEQ_LENGTH
 
 import tensorflow as tf
 import pandas as pd
@@ -9,8 +9,8 @@ import pathlib
 import glob
 
 
-def create_sequences(dataset: tf.data.Dataset,
-                     seq_length: int = 25,
+def create_sequences(dataset: tf.data.Dataset, 
+                     seq_length: int = SEQ_LENGTH,
                      vocab_size: int = 128) -> tf.data.Dataset:
     """Returns TF Dataset of sequence and label examples."""
 
@@ -50,8 +50,12 @@ def midi_to_notes(midi_file: str) -> pd.DataFrame:
     instrument = midi.instruments[0]
     notes = collections.defaultdict(list)
 
-    # sort the notes by start time
-    sorted_notes = sorted(instrument.notes, key=lambda note: note.start)
+    # sort the notes by start time, and then by pitch
+
+    def sort_func(note):
+        return note.start, note.pitch
+
+    sorted_notes = sorted(instrument.notes, key=sort_func)
     prev_start = sorted_notes[0].start
 
     for note in sorted_notes:
@@ -142,6 +146,8 @@ def predict_next_note(notes: np.ndarray,
 
     pitch_logits /= temperature
     pitch = tf.random.categorical(pitch_logits, num_samples=1)
+    print(int(pitch))
+    # unwrap array 1 level
     pitch = tf.squeeze(pitch, axis=-1)
     duration = tf.squeeze(duration, axis=-1)
     delta = tf.squeeze(delta, axis=-1)

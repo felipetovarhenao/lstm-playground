@@ -1,10 +1,10 @@
-import tensorflow as tf
 import numpy as np
-from utils import midi_to_notes, notes_to_midi, load_midi_files, predict_next_note, mse_with_positive_pressure
 from config import NOTE_FEATURES, SEQ_LENGTH, VOCAB_SIZE, TEMPERATURE, NUM_PREDICTIONS
+from utils import midi_to_notes, notes_to_midi, load_midi_files, predict_next_note, mse_with_positive_pressure
 import pretty_midi
 import pandas as pd
 from random import choice
+import tensorflow as tf
 
 # load pretrained model
 model = tf.keras.models.load_model('test-model.h5', custom_objects={'mse_with_positive_pressure': mse_with_positive_pressure})
